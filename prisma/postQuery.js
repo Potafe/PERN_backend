@@ -153,6 +153,7 @@ export async function get_following_posts(userId){
     })
     return posts
 }
+
 export async function create_post(body,userId,tags){
     const post = await prisma.post.create({
         data:{
@@ -188,6 +189,7 @@ export async function create_post(body,userId,tags){
     })
     return post
 }
+
 export async function delete_post(id){
     const post = await prisma.post.delete({
         where:{

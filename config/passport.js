@@ -3,17 +3,20 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const {PrismaClient} = require("@prisma/client")
 const prisma = new PrismaClient();
 
-passport.use (
-    new GoogleStrategy({
-        callbackURL:`${process.env.API_URL}/api/auth/google/redirect`,
+//TODO update the OAuth Flow
+// I want to Enforce unique usernames
+// if its a new google account -> redirect to frontend to create a username first
+passport.use(
+        new GoogleStrategy({
+        callbackURL:`${process.env.API_URL}`,
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET
         },
         
         async(accessToken,refreshToken,profile,done)=>{
-            try {
+            try{
             //for now we ignore the access and refresh token
-                //TODO profile.image.url -> set this
+
                 const googleId = profile.id;
                 const displayName = profile.displayName
                 const email = profile.emails[0].value;
@@ -24,7 +27,7 @@ passport.use (
                 if (googleExist) return done(null,googleExist) //Registered google user
 
                 const emailExist = await prisma.user.findUnique({where:{email}})
-                if (emailExist) { 
+                if (emailExist){ 
                     //We override and give access to email registered account
                     const updatedUser = await prisma.user.update({
                         where:{email},
@@ -34,15 +37,18 @@ passport.use (
                 }
 
                 //Completely new user
+
+                //BUG NO USERNAME, make sure to check in call back
                 const newUser = await prisma.user.create({
                     displayName,
                     email,
                     googleId
                 })
+
                 return done(null,newUser)
 
             } catch(err){
-                console.log("GOOGLE STATUS ERR:")
+                console.log("GOOGLE STAT ERR:")
                 return done(err)
             }
         }

@@ -79,6 +79,7 @@ model Post {
   tags       Tag[]
   likes      PostLike[]
   comments   Comment[]
+  public_d   String? //For attachment ID on Cloudinary
   @@map("post")
 }
 
