@@ -39,7 +39,7 @@ module.exports.loginPost = [
     })
 ];
 
-module.exports.signupPost = [
+exports.signupPost = [
     body("email", "Invalid email").trim().isEmail(),
     body("displayName")
         .trim()
@@ -53,6 +53,7 @@ module.exports.signupPost = [
         .withMessage("Password must be between 2-35 characters long"),
     validationHandle,  // Add your validation handler here
     asyncHandler(async (req, res, next) => {
+        console.log("Signup Controller Reached")
         const { displayName, email, password } = req.body;
         const user = await emailSignupValidation(displayName, email, password);
         const token = generateToken(user.id);
