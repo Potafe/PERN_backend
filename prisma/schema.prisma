@@ -16,6 +16,7 @@ datasource db {
 model User {
   id               Int           @id @default(autoincrement())
   displayName      String        @map("display_name")
+  username         String?       @unique
   email            String        @unique
   googleId         String?       @unique @map("google_id")
   hashedPassword   String?       @map("hashed_password")
@@ -36,7 +37,7 @@ model User {
 
 model Profile {
   id             Int      @id @default(autoincrement())
-  bio            String?
+  bio            String? @default("")
   profilePicture String?
   website        String?
   github         String?
@@ -44,6 +45,7 @@ model Profile {
   updatedAt      DateTime @updatedAt
   userId         Int      @unique
   user           User     @relation(fields: [userId], references: [id])
+  pfp_public_id  String?
   @@map("profile")
 }
 
@@ -79,7 +81,7 @@ model Post {
   tags       Tag[]
   likes      PostLike[]
   comments   Comment[]
-  public_d   String? //For attachment ID on Cloudinary
+  public_id   String? //For attachment ID on Cloudinary
   @@map("post")
 }
 

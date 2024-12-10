@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 const validationHandle = require("../middleware/validationHandle")
 const upload = require("../config/multer");
 const { uploadStream, deleteFile } = require("../util/cloudinaryUtil");
+const multerCheckFile = require("../middleware/multerCheckFile")
 
 exports.getManyPosts = asyncHandler(async(req,res,next)=>{
     const userId = req.query.id; //user if valid 
@@ -67,14 +68,7 @@ module.exports.createPost = [
         .isURL(),
     
     validationHandle,
-
-    //Multer Handle upload only if file is pressent
-    (req,res,next)=>{
-        if (req.file!==undefined){
-            //call multer middleware
-            upload.single("attachment") 
-        } else next(); //skip
-    },
+    multerCheckFile,
 
     asyncHandler(async(req,res,next)=>{
 

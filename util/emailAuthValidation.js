@@ -5,7 +5,7 @@ const myError = require("../lib/myError");
 const prisma = new PrismaClient();
 
 /* 
--> userName
+-> username
 -> email 
 -> password
 */
@@ -24,7 +24,7 @@ async function emailLoginValidation(email, password) {
     }
 }
 
-async function emailSignupValidation(userName, email, password) {
+async function emailSignupValidation(username, email, password) {
     // Ensure email is unique
     const exist = await prisma.user.findUnique({ where: { email } });
     if (exist) throw new myError("Email has already been taken", 409); // Conflict
@@ -35,7 +35,7 @@ async function emailSignupValidation(userName, email, password) {
 
             const user = await prisma.user.create({
                 data: {
-                    userName,
+                    username,
                     email,
                     hashedPassword, // Use `hashedPassword` instead of `password`
                 },

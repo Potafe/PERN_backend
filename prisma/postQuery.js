@@ -47,7 +47,8 @@ export async function user_posts(id){
             },
             author:{
                 select:{
-                    displayName,
+                    displayName: true,
+                    username: true,
                     profile:{
                         select:{
                             profilePicture:true,

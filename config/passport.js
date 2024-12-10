@@ -8,12 +8,12 @@ const prisma = new PrismaClient();
 // if its a new google account -> redirect to frontend to create a username first
 passport.use(
         new GoogleStrategy({
-        callbackURL:`${process.env.API_URL}`,
+        callbackURL:`${process.env.API_URL}/api/auth/google/redirect`,
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET
         },
         
-        async(accessToken,refreshToken,profile,done)=>{
+        async(accessToken,refreshToken,profile,done) => {
             try{
             //for now we ignore the access and refresh token
 

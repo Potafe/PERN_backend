@@ -28,6 +28,9 @@ router.delete("/:postId",
 )
 
 // UPDATE a post
-router.patch(":/postId")
+router.patch(":/postId",
+    ownPostAuth,
+    controller.updatePost
+)
  
 module.exports = router;
