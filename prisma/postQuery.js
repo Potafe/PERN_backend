@@ -1,7 +1,7 @@
 import {PrismaClient} from "@prisma/client"
 const prisma = new PrismaClient();
 
-export async function all_posts(){
+export async function all_posts() {
     const posts = await prisma.post.findMany({ 
         //TODO narrow down the selects
         include:{ 
@@ -32,7 +32,8 @@ export async function all_posts(){
     })
     return posts;
 }
-export async function user_posts(id){
+
+export async function user_posts(id) {
     const posts = await prisma.post.findMany({ //TODO narrow down the selects
         include:{ 
             //WTF
@@ -66,8 +67,9 @@ export async function user_posts(id){
     })
     return posts;
 }
-export async function get_post(id){ 
-    //TODO confirm if this works
+
+// TODO, include all child comments as comments too!
+export async function get_post(id){ // TODO confirm if this shit works
     const post = await prisma.post.findUnique({
         where:{
             id
@@ -84,8 +86,10 @@ export async function get_post(id){
                     name:true
                 }
             },
+            // BUG, this will select all child comment as main comment as well!
             comments:{
-                select:{
+                where:{parentCommentId:null},
+                select:{//==
                     body:true,
                     createdAt:true,
                     _count:{
@@ -95,27 +99,46 @@ export async function get_post(id){
                     },
                     user:{
                         select:{
-                            displayName:true,
+                            id:true,
+                            username:true,
                             profile:{
                                 select:{
                                     profilePicture:true,
                                 }
                             },
+                        }
+                    },
+                    childComment:{
+                        select:{
+                            body:true,
+                            createdAt:true,
+                            parentCommentId:true,
                             _count:{
                                 select:{
-                                    followers:true,
-                                    following:true
+                                    likes:true
+                                }
+                            },
+                            user:{
+                                select:{
+                                    displayName: true,
+                                    profile:{
+                                        select:{
+                                            profilePicture:true
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
-                }
+                }//==
             }
         }
     })
     return post;
 }
-export async function get_following_posts(userId){
+
+
+export async function get_following_posts(userId) {
     const posts = await prisma.post.findMany({
         //The author of the post is being followed by some 'userId'
         where:{
@@ -155,7 +178,7 @@ export async function get_following_posts(userId){
     return posts
 }
 
-export async function create_post(body,userId,tags){
+export async function create_post(body,userId,tags) {
     const post = await prisma.post.create({
         data:{
             body,
@@ -191,7 +214,7 @@ export async function create_post(body,userId,tags){
     return post
 }
 
-export async function delete_post(id){
+export async function delete_post(id) {
     const post = await prisma.post.delete({
         where:{
             id
@@ -199,7 +222,8 @@ export async function delete_post(id){
     })
     return post;
 }
-export async function update_post(id,postData,tags){
+
+export async function update_post(id,postData,tags) {
     //TODO to set tags regardless
     const post = await prisma.post.update({
         where:{
